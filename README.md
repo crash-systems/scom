@@ -19,7 +19,7 @@ git clone https://github.com/crash-systems/scom.git
 cd scom
 make
 make install
-scom --help
+scom
 ```
 
 ### With Nix
