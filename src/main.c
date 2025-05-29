@@ -35,6 +35,12 @@ bool parse_args(int ac, char **av, scom_ctx *ctx)
                 ctx->src = optarg;
                 break;
             case 'b':
+                ctx->baudrate = baud_from_int(atoi(optarg));
+                if (!ctx->baudrate)
+                    return fputs("Baudrate is not valid.\nValid baudrate are:"
+                        " 50, 75, 110, 150, 300, 1200, 2400, 4800, 9600, 19200,"
+                        " 38400, 57600, 115200, 230400, 460800, 500000, 921600,"
+                        " 1000000, 1115200\n", stderr), false;
                 break;
             default:
                 print_usage();
@@ -46,7 +52,7 @@ bool parse_args(int ac, char **av, scom_ctx *ctx)
 
 int main(int ac, char **av)
 {
-    scom_ctx ctx = {{0}, NULL, 0};
+    scom_ctx ctx = {{0}, NULL, 0, B9600};
 
     if (!parse_args(ac, av, &ctx))
         return EXIT_FAILURE;

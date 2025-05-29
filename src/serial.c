@@ -8,6 +8,7 @@
 #include <unistd.h>
 
 #include "common.h"
+#include "serial.h"
 
 int open_serial(scom_ctx *ctx)
 {
@@ -15,11 +16,11 @@ int open_serial(scom_ctx *ctx)
     struct termios tty;
 
     if (fd < 0) {
-        perror("open");
+        perror(BIN_NAME);
         return -1;
     }
     if (tcgetattr(fd, &tty) != 0) {
-        perror("tcgetattr");
+        perror(BIN_NAME);
         close(fd);
         return -1;
     }
@@ -28,8 +29,8 @@ int open_serial(scom_ctx *ctx)
     ctx->saved_term_flags = tty;
 
     // set baudrate
-    cfsetospeed(&tty, B9600);
-    cfsetispeed(&tty, B9600);
+    cfsetospeed(&tty, ctx->baudrate);
+    cfsetispeed(&tty, ctx->baudrate);
 
     tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;
     tty.c_iflag &= ~IGNBRK;
@@ -45,12 +46,20 @@ int open_serial(scom_ctx *ctx)
     tty.c_cflag &= ~CRTSCTS;
 
     if (tcsetattr(fd, TCSANOW, &tty) != 0) {
-        perror("tcsetattr");
+        perror(BIN_NAME);
         close(fd);
         return -1;
     }
 
     return fd;
+}
+
+speed_t baud_from_int(int baudrate)
+{
+#define MATCH_BAUD(b, s) if (baudrate == (b)) return s;
+    BAUDRATE_MAP(MATCH_BAUD)
+#undef MATCH_BAUD
+    return (speed_t)0;
 }
 
 void run_serial_io(int fd)
@@ -65,7 +74,7 @@ void run_serial_io(int fd)
         FD_SET(fd, &fds);
 
         if (select(maxfd + 1, &fds, NULL, NULL, NULL) < 0 && errno != EINTR) {
-            perror("select");
+            perror(BIN_NAME);
             break;
         }
 
