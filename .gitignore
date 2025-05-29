@@ -1,0 +1,13 @@
+# Bin
+scom
+debug
+test
+
+# Build
+.build
+*.o
+*.out
+
+# Cache
+.direnv
+.cache
