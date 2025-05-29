@@ -1,0 +1,25 @@
+name: scom checks
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  check_the_repository_state:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Get branch name
+        id: branch-names
+        uses: tj-actions/branch-names@v8
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ steps.branch-names.outputs.head_ref_branch }}
+
+      - name: Build project
+        run: make
