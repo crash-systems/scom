@@ -59,6 +59,5 @@ int main(int ac, char **av)
     ctx.src_fd = open_serial(&ctx);
     if (ctx.src_fd < 0)
         return EXIT_FAILURE;
-    run_serial_io(ctx.src_fd);
-    return EXIT_SUCCESS;
+    return run_serial_io(ctx.src_fd);
 }

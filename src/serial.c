@@ -1,5 +1,6 @@
 #include <errno.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,6 +10,8 @@
 
 #include "common.h"
 #include "serial.h"
+
+static volatile bool KEEP_RUNNING = true;
 
 int open_serial(scom_ctx *ctx)
 {
@@ -25,25 +28,19 @@ int open_serial(scom_ctx *ctx)
         return -1;
     }
 
-    // save actual term flags
     ctx->saved_term_flags = tty;
 
-    // set baudrate
     cfsetospeed(&tty, ctx->baudrate);
     cfsetispeed(&tty, ctx->baudrate);
 
     tty.c_cflag = (tty.c_cflag & ~CSIZE) | CS8;
-    tty.c_iflag &= ~IGNBRK;
+    tty.c_iflag &= ~(IGNBRK | ICRNL | INLCR | IGNCR | IXON | IXOFF | IXANY);
     tty.c_lflag = 0;
     tty.c_oflag = 0;
     tty.c_cc[VMIN]  = 1;
     tty.c_cc[VTIME] = 1;
-
-    tty.c_iflag &= ~(IXON | IXOFF | IXANY);
     tty.c_cflag |= (CLOCAL | CREAD);
-    tty.c_cflag &= ~(PARENB | PARODD);
-    tty.c_cflag &= ~CSTOPB;
-    tty.c_cflag &= ~CRTSCTS;
+    tty.c_cflag &= ~(PARENB | PARODD | CSTOPB | CRTSCTS);
 
     if (tcsetattr(fd, TCSANOW, &tty) != 0) {
         perror(BIN_NAME);
@@ -62,13 +59,38 @@ speed_t baud_from_int(int baudrate)
     return (speed_t)0;
 }
 
-void run_serial_io(int fd)
+void handle_sigint(int sig)
 {
+    (void)sig;
+    KEEP_RUNNING = false;
+}
+
+bool run_serial_io(int fd)
+{
+    struct termios orig_tty;
+    struct termios raw_tty;
     char buff[256];
     fd_set fds;
-    int maxfd = fd > STDIN_FILENO ? fd : STDIN_FILENO;
+    int maxfd;
 
-    while (true) {
+    if (tcgetattr(STDIN_FILENO, &orig_tty) == -1) {
+        perror(BIN_NAME);
+        return false;
+    }
+
+    raw_tty = orig_tty;
+    raw_tty.c_lflag &= ~(ICANON | ECHO);
+    raw_tty.c_cc[VMIN] = 1;
+    raw_tty.c_cc[VTIME] = 0;
+
+    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw_tty) == -1) {
+        perror(BIN_NAME);
+        return false;
+    }
+
+    maxfd = fd > STDIN_FILENO ? fd : STDIN_FILENO;
+
+    while (KEEP_RUNNING) {
         FD_ZERO(&fds);
         FD_SET(STDIN_FILENO, &fds);
         FD_SET(fd, &fds);
@@ -80,14 +102,18 @@ void run_serial_io(int fd)
 
         if (FD_ISSET(fd, &fds)) {
             ssize_t n = read(fd, buff, sizeof(buff));
-            if (n > 0)
-                write(STDOUT_FILENO, buff, n);
+            if (n <= 0) break;
+            write(STDOUT_FILENO, buff, n);
         }
 
         if (FD_ISSET(STDIN_FILENO, &fds)) {
             ssize_t n = read(STDIN_FILENO, buff, sizeof(buff));
-            if (n > 0)
-                write(fd, buff, n);
+            if (n <= 0) break;
+            write(fd, buff, n);
         }
     }
+
+    tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_tty);
+    return true;
 }
+

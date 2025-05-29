@@ -1,5 +1,7 @@
 #ifndef SERIAL_H
     #define SERIAL_H
+    #include <stdbool.h>
+
     #include "common.h"
 
 // supported baudrade
@@ -25,6 +27,6 @@
     _(1152000, B1152000)
 
 int open_serial(scom_ctx *ctx);
-void run_serial_io(int fd);
+bool run_serial_io(int fd);
 speed_t baud_from_int(int baudrate);
 #endif /* SERIAL_H */
