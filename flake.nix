@@ -26,7 +26,7 @@
     formatter = forAllSystems (pkgs: pkgs.alejandra);
 
     packages = forAllSystems (pkgs: {
-      default = self.packages.${pkgs.system}._42sh;
+      default = self.packages.${pkgs.system}._scom;
       _scom = pkgs.callPackage ./nix/package.nix { };
     });
   };
