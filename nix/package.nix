@@ -19,7 +19,7 @@ stdenv.mkDerivation {
 
   meta = {
     description = "scom is a small, fast, and minimalistic command-line tool to open and interact with a serial port on Linux.";
-    license = [ lib.licences.gpl3 ];
+    license = [ lib.licenses.gpl3 ];
     mainProgram = "scom";
     platforms = lib.platforms.unix;
     maintainers = with lib.maintainers; [ savalet ];

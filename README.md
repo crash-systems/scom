@@ -31,7 +31,7 @@ nix run github:crash-systems/scom
 ## 🛠️ Usage
 
 ```bash
-scom /dev/ttyUSB0 9600
+scom -s /dev/ttyUSB0 -b 9600
 ```
 
 ## 📄 License

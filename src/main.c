@@ -12,7 +12,7 @@ static
 void print_usage(void)
 {
     puts(BIN_NAME ", version " VERSION);
-    puts("Usage: " BIN_NAME " SOURCE eg. /dev/USBtty0 [BAUDRATE default 9600]");
+    puts("Usage: " BIN_NAME "-s SOURCE eg. /dev/ttyUSB0 [-b BAUDRATE default 9600]");
     puts("scom home page: <https://github.com/crash-systems/scom>");
 }
 
@@ -26,6 +26,11 @@ void print_usage(void)
 static
 bool parse_args(int ac, char **av, scom_ctx *ctx)
 {
+    if (ac < 2 || ac > 5) {
+        print_usage();
+        return false;
+    }
+
     for (int opt = getopt(ac, av, OPT_FLAGS); opt != -1; opt = getopt(ac, av, OPT_FLAGS)) {
         switch(opt) {
             case 'h':

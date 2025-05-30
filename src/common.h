@@ -2,7 +2,7 @@
     #define COMMON_H
     #include <termio.h>
 
-    #define VERSION "dev"
+    #define VERSION "1.0"
     #define BIN_NAME "scom"
     #define OPT_FLAGS "hb:s:"
 
