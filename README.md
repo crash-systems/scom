@@ -24,8 +24,13 @@ scom
 
 ### With Nix
 
+scom is now available on the nixpkgs public repository, to use it from nixpkgs run:
 ```bash
-nix run github:crash-systems/scom
+nix run nixpkgs#scom
+```
+or via nix-shell:
+```bash
+nix-shell -p scom
 ```
 
 ## 🛠️ Usage
