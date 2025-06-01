@@ -24,6 +24,8 @@ scom
 
 ### With Nix
 
+[![Packaging status](https://repology.org/badge/vertical-allrepos/scom.svg)](https://repology.org/project/scom/versions)
+
 scom is now available on the nixpkgs public repository, to use it from nixpkgs run:
 ```bash
 nix run nixpkgs#scom
