@@ -18,6 +18,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <signal.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,8 +28,6 @@
 
 #include "common.h"
 #include "serial.h"
-
-static volatile bool KEEP_RUNNING = true;
 
 int open_serial(scom_ctx *ctx)
 {
@@ -76,12 +75,6 @@ speed_t baud_from_int(int baudrate)
     return (speed_t)0;
 }
 
-void handle_sigint(int sig)
-{
-    (void)sig;
-    KEEP_RUNNING = false;
-}
-
 bool run_serial_io(int fd)
 {
     struct termios orig_tty;
@@ -107,7 +100,9 @@ bool run_serial_io(int fd)
 
     maxfd = fd > STDIN_FILENO ? fd : STDIN_FILENO;
 
-    while (KEEP_RUNNING) {
+    signal(SIGINT, SIG_IGN);
+
+    for (;;) {
         FD_ZERO(&fds);
         FD_SET(STDIN_FILENO, &fds);
         FD_SET(fd, &fds);
@@ -126,6 +121,7 @@ bool run_serial_io(int fd)
         if (FD_ISSET(STDIN_FILENO, &fds)) {
             ssize_t n = read(STDIN_FILENO, buff, sizeof(buff));
             if (n <= 0) break;
+            if (*buff == CTRL_D_OCT_SEQ) break;
             write(fd, buff, n);
         }
     }

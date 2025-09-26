@@ -23,6 +23,7 @@
     #define VERSION "1.1"
     #define BIN_NAME "scom"
     #define OPT_FLAGS "hb:s:"
+    #define CTRL_D_OCT_SEQ '\04'
 
 typedef struct {
     struct termios saved_term_flags;
