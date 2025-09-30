@@ -20,7 +20,7 @@
     #define COMMON_H
     #include <termio.h>
 
-    #define VERSION "1.1"
+    #define VERSION "1.2"
     #define BIN_NAME "scom"
     #define OPT_FLAGS "hb:s:"
     #define CTRL_D_OCT_SEQ '\04'
