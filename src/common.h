@@ -18,7 +18,7 @@
 
 #ifndef COMMON_H
     #define COMMON_H
-    #include <termio.h>
+    #include <termios.h>
 
     #define VERSION "1.2"
     #define BIN_NAME "scom"
