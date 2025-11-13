@@ -22,6 +22,14 @@
 
     #include "common.h"
 
+#ifdef __APPLE__
+    #define  B460800   0010004
+    #define  B500000   0010005
+    #define  B921600   0010007
+    #define  B1000000  0010010
+    #define  B1152000  0010011
+#endif
+
 // supported baudrade
 #define BAUDRATE_MAP(_) \
     _(50, B50) \
