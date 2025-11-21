@@ -9,6 +9,7 @@
       nixpkgs.lib.genAttrs [
         "x86_64-linux"
         "aarch64-linux"
+        "aarch64-darwin"
       ] (system: function nixpkgs.legacyPackages.${system});
   in {
     devShells = forAllSystems (pkgs: {
@@ -16,9 +17,9 @@
         hardeningDisable = ["fortify"];
         packages = with pkgs; [
           gcc
-          valgrind
           compiledb
           gcovr
+          git
         ];
       };
     });

@@ -11,3 +11,8 @@ test
 # Cache
 .direnv
 .cache
+
+# Nix
+.envrc
+
+compile_commands.json
