@@ -83,7 +83,9 @@ bool run_serial_io(int fd)
     fd_set fds;
     int maxfd;
 
-    if (tcgetattr(STDIN_FILENO, &orig_tty) == -1) {
+    bool tty = isatty(STDIN_FILENO);
+
+    if (tty && tcgetattr(STDIN_FILENO, &orig_tty) == -1) {
         perror(BIN_NAME);
         return false;
     }
@@ -93,7 +95,7 @@ bool run_serial_io(int fd)
     raw_tty.c_cc[VMIN] = 1;
     raw_tty.c_cc[VTIME] = 0;
 
-    if (tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw_tty) == -1) {
+    if (tty && tcsetattr(STDIN_FILENO, TCSAFLUSH, &raw_tty) == -1) {
         perror(BIN_NAME);
         return false;
     }
@@ -126,7 +128,7 @@ bool run_serial_io(int fd)
         }
     }
 
-    tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_tty);
+    if (tty) tcsetattr(STDIN_FILENO, TCSAFLUSH, &orig_tty);
     return true;
 }
 
