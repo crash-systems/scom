@@ -1,6 +1,6 @@
 /*
     scom, Minimal serial communication tool
-    Copyright (C) 2025  crash-systems
+    Copyright (C) 2025-2026  crash-systems
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,7 +45,7 @@ void print_usage(void)
     puts("  <https://github.com/crash-systems/scom>");
     puts("");
     puts("License:");
-    puts("  Copyright (C) 2025 crash-system");
+    puts("  Copyright (C) 2025-2026 crash-system");
     puts("  This program comes with ABSOLUTELY NO WARRANTY.");
     puts("  This is free software, and you are welcome to redistribute it");
     puts("  under certain conditions; for details, see:");
