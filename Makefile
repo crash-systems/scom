@@ -6,12 +6,16 @@ BUILD_DIR := .build
 
 CFLAGS += -Wall -Wextra -Werror=write-strings -iquote src
 CFLAGS += -Wno-unused-parameter -Wunused-result
-CFLAGS += -Wp,-U_FORTIFY_SOURCE -Wcast-qual -Wduplicated-branches
-CFLAGS += -Wduplicated-cond -Wformat=2 -Wshadow -fno-builtin
+CFLAGS += -Wp,-U_FORTIFY_SOURCE -Wcast-qual
+CFLAGS += -Wformat=2 -Wshadow -fno-builtin
 CFLAGS += -Wstrict-aliasing=0 -Wstrict-prototypes -Wunreachable-code
 CFLAGS += -Wwrite-strings -Werror=declaration-after-statement
 CFLAGS += -Werror=format-nonliteral -Werror=int-conversion -Werror=return-type
-CFLAGS += -Wno-discarded-qualifiers
+
+
+ifneq ($(shell uname),Darwin)
+	CFLAGS += -Wduplicated-branches -Wduplicated-cond -Wno-discarded-qualifiers 
+endif
 
 include utils.mk
 
@@ -26,11 +30,11 @@ OBJ_$(strip $1) := $$($(strip $2):%.c=$$(BUILD_DIR)/$(strip $1)/%.o)
 
 $$(BUILD_DIR)/$(strip $1)/%.o: %.c
 	@ mkdir -p $$(dir $$@)
-	$$(COMPILE.c) $$< -o $$@
+	@ $$(COMPILE.c) $$< -o $$@
 	@ $$(LOG_TIME) "$$(C_GREEN) CC $$(C_PURPLE) $$(notdir $$@) $$(C_RESET)"
 
 $$(NAME_$(strip $1)): $$(OBJ_$(strip $1))
-	$$(LINK.c) $$(OBJ_$(strip $1)) $$(LDFLAGS) $$(LDLIBS) -o $$@
+	@ $$(LINK.c) $$(OBJ_$(strip $1)) $$(LDFLAGS) $$(LDLIBS) -o $$@
 	@ $$(LOG_TIME) "$$(C_GREEN) CC $$(C_PURPLE) $$(notdir $$@) $$(C_RESET)"
 	@ $$(LOG_TIME) "$$(C_GREEN) OK  Compilation finished $$(C_RESET)"
 
