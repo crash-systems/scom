@@ -33,7 +33,11 @@ void print_usage(void)
     puts("Usage: " BIN_NAME " -s DEVICE [-b BAUDRATE] [-h]");
     puts("");
     puts("Options:");
+#if defined(__APPLE__)
+    puts("  -s DEVICE       Specify the serial device (e.g. /dev/tty.usb0)");
+#else
     puts("  -s DEVICE       Specify the serial device (e.g. /dev/ttyUSB0)");
+#endif
     puts("  -b BAUDRATE     Set the baudrate (default: 9600)");
     puts("                  Available values:");
     puts("                    50, 75, 110, 150, 300, 1200, 2400, 4800,");
