@@ -1,10 +1,3 @@
-##
-## EPITECH PROJECT, 2024
-## template
-## File description:
-## utils.mk
-##
-
 ifneq ($(shell command -v tput),)
   ifneq ($(shell tput colors),0)
 
@@ -22,7 +15,12 @@ C_BEGIN := \033[A
   endif
 endif
 
-NOW = $(shell date +%s%3N)
+ifneq ($(shell uname),Darwin)
+  NOW = $(shell date +%s%3N)
+else
+  NOW = $(shell gdate +%s%3N)
+endif
+
 STIME := $(call NOW)
 TIME_NS = $(shell expr $(call NOW) - $(STIME))
 TIME_MS = $(shell expr $(call TIME_NS))
