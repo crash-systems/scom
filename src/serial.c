@@ -77,7 +77,7 @@ speed_t baud_from_int(int baudrate)
 
 bool run_serial_io(int fd)
 {
-    struct termios orig_tty;
+    struct termios orig_tty = {0};
     struct termios raw_tty;
     char buff[256];
     fd_set fds;
